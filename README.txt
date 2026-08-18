@@ -1,23 +1,35 @@
-RetailMate Ghana v0.3 — Functional Prototype
+RetailMate Ghana Clean v0.3.1
 
-Works now:
-- Dynamic dashboard
-- Add/restock products
-- Record Cash, Mobile Money and Credit sales
-- Automatic stock deduction
-- Purchase history
-- Customer credit tracking and mark-paid
+This is the clean replacement build.
+
+Features:
+- Sales
+- Products and stock
+- Purchases/restocking
+- Cash, Mobile Money and credit transactions
 - Expenses
-- Daily sales / cost / expense / estimated profit calculations
-- Low-stock alerts
-- Reports
-- Business settings
-- Local browser storage
-- Responsive phone and desktop layout
+- Customer credit
+- Daily business report
+- Offline local storage
+- Database Management
+- JSON backup export
+- JSON backup restore
+- Database statistics
+- Controlled database reset
 
 Important:
-This is still a prototype. Records are stored only in the browser on the current device.
-Do not rely on it as the only business record until cloud backup/sync and production security are added.
+This version is single-device local storage.
+Cloud database, multi-user accounts and multi-device synchronization come next.
 
-Vercel:
-Upload the contents of this folder to your current RetailMate Vercel project. No build command is required.
+To deploy:
+Upload these files to the root of the GitHub repository and commit to main:
+index.html
+styles.css
+app.js
+manifest.json
+sw.js
+vercel.json
+README.txt
+
+Verify the footer says:
+RetailMate Ghana Clean v0.3.1
