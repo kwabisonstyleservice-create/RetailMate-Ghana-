@@ -1,4 +1,4 @@
-# RetailMate Ghana v0.1
+# RetailMate Ghana v0.3
 
 Working offline-first MVP for everyday retailers.
 
