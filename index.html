@@ -4,41 +4,71 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#102a43">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<title>RetailMate Ghana v0.3.2</title>
-<link rel="manifest" href="manifest.json?v=032">
-<link rel="stylesheet" href="styles.css?v=032">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="RetailMate">
+<title>RetailMate Ghana v0.3.3</title>
+<link rel="manifest" href="manifest.json?v=033">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f5f7f9;color:#17202a}
+header{background:#102a43;color:white;padding:18px;display:flex;justify-content:space-between;align-items:center;gap:12px}header h1{margin:0;font-size:1.3rem}header p{margin:4px 0 0;opacity:.75}header span{font-size:.8rem}
+main{max-width:950px;margin:auto;padding:16px}.status{padding:10px 12px;border-radius:10px;background:#e9f7ef;color:#286147;margin-bottom:12px;font-size:.85rem}.status.offline{background:#eef3f7;color:#355f7c}
+.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;background:white;padding:14px;border-radius:16px}.metrics div{background:#f7f9fb;padding:14px;border-radius:12px}.metrics span{display:block;font-size:.8rem;color:#667}.metrics strong{display:block;margin-top:5px;font-size:1.15rem}
+.actions{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}.actions button,.primary,.secondary,.danger{border:0;border-radius:14px;padding:16px 12px;background:#1f5a7a;color:white;font-weight:800}.actions button:nth-child(2){background:#2f6b57}.actions button:nth-child(3){background:#665687}.actions button:nth-child(4){background:#8b5e34}.actions button:nth-child(5){background:#8a3f56}.actions button:nth-child(6){background:#263f5c}.actions .db{grid-column:1/3;background:#102a43}
+.panel{background:white;border-radius:16px;padding:18px;min-height:220px}.form{display:grid;gap:10px}.form label{font-size:.85rem;color:#445}.form input,.form select{width:100%;padding:12px;border:1px solid #ccd5dc;border-radius:10px;font-size:1rem}
+.item{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid #e1e6ea;border-radius:12px;padding:12px;margin-bottom:8px}.item small{display:block;color:#667;margin-top:3px}.badge{background:#eef3f7;padding:5px 8px;border-radius:999px}
+.report,.dbgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.report div,.dbcard{background:#f7f9fb;border-radius:12px;padding:13px}.report small,.dbcard small{display:block;color:#667}.report b,.dbcard b{display:block;margin-top:4px}.dbactions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.secondary{background:white;color:#1f5a7a;border:1px solid #ccd5dc}.danger{background:#fff0f0;color:#a33;border:1px solid #efcaca}.notice{padding:11px;border-radius:10px;background:#eef6f2;color:#315d49;font-size:.85rem;margin-bottom:12px}.empty{text-align:center;color:#777;padding:25px}.empty strong{display:block;color:#222;margin-bottom:5px}footer{text-align:center;color:#778;padding:24px 16px;font-size:.8rem}
+@media(min-width:700px){.metrics{grid-template-columns:repeat(4,1fr)}.actions{grid-template-columns:repeat(4,1fr)}.actions .db{grid-column:auto}.dbgrid{grid-template-columns:repeat(4,1fr)}}
+</style>
 </head>
 <body>
-<header class="topbar">
-  <div><h1>RetailMate Ghana</h1><p id="businessName">My Shop</p></div>
-  <div class="topright"><span id="networkStatus">Loading app…</span><button id="databaseTopBtn" type="button">Database</button></div>
-</header>
-
+<header><div><h1>RetailMate Ghana</h1><p id="businessName">My Shop</p></div><span id="networkStatus">Loading…</span></header>
 <main>
-  <div id="appStatus" class="app-status">App starting…</div>
-  <section class="metrics">
-    <div><span>Sales today</span><strong id="salesToday">GH₵0.00</strong></div>
-    <div><span>Expenses</span><strong id="expensesToday">GH₵0.00</strong></div>
-    <div><span>Credit owed</span><strong id="creditOwed">GH₵0.00</strong></div>
-    <div><span>Est. profit</span><strong id="profitToday">GH₵0.00</strong></div>
-  </section>
-
-  <nav class="actions">
-    <button id="sellBtn" type="button">SELL</button>
-    <button id="buyBtn" type="button">I BOUGHT GOODS</button>
-    <button id="stockBtn" type="button">MY STOCK</button>
-    <button id="expenseBtn" type="button">EXPENSE</button>
-    <button id="creditBtn" type="button">CUSTOMER OWES ME</button>
-    <button id="businessBtn" type="button">MY BUSINESS</button>
-    <button id="databaseBtn" class="dbbtn" type="button">DATABASE MANAGEMENT</button>
-  </nav>
-
-  <section id="view" class="panel"><div class="empty"><strong>Loading RetailMate…</strong></div></section>
+<div id="appStatus" class="status">RetailMate starting…</div>
+<section class="metrics">
+<div><span>Sales today</span><strong id="salesToday">GH₵0.00</strong></div>
+<div><span>Expenses</span><strong id="expensesToday">GH₵0.00</strong></div>
+<div><span>Credit owed</span><strong id="creditOwed">GH₵0.00</strong></div>
+<div><span>Est. profit</span><strong id="profitToday">GH₵0.00</strong></div>
+</section>
+<nav class="actions">
+<button id="sellBtn">SELL</button><button id="buyBtn">I BOUGHT GOODS</button>
+<button id="stockBtn">MY STOCK</button><button id="expenseBtn">EXPENSE</button>
+<button id="creditBtn">CUSTOMER OWES ME</button><button id="businessBtn">MY BUSINESS</button>
+<button id="databaseBtn" class="db">DATABASE MANAGEMENT</button>
+</nav>
+<section id="view" class="panel"></section>
 </main>
-
-<footer>RetailMate Ghana v0.3.2</footer>
+<footer>RetailMate Ghana v0.3.3 • Offline Ready</footer>
 <input type="file" id="importFile" accept=".json,application/json" hidden>
-<script src="app.js?v=032" defer></script>
+<script>
+(() => {
+'use strict';
+const KEY='retailmate_ghana_v033';
+const BASE={settings:{businessName:'My Shop'},products:[],sales:[],purchases:[],expenses:[],credits:[]};
+const $=id=>document.getElementById(id), clone=o=>JSON.parse(JSON.stringify(o)), D=()=>new Date().toISOString().slice(0,10), M=n=>'GH₵'+Number(n||0).toFixed(2);
+const uid=()=>Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+function normalize(p){return{settings:{...BASE.settings,...(p.settings||{})},products:Array.isArray(p.products)?p.products:[],sales:Array.isArray(p.sales)?p.sales:[],purchases:Array.isArray(p.purchases)?p.purchases:[],expenses:Array.isArray(p.expenses)?p.expenses:[],credits:Array.isArray(p.credits)?p.credits:[]}}
+function load(){try{let raw=localStorage.getItem(KEY);if(raw)return normalize(JSON.parse(raw));let old=localStorage.getItem('retailmate_ghana_v032');if(old){let d=normalize(JSON.parse(old));localStorage.setItem(KEY,JSON.stringify(d));return d}}catch(e){}return clone(BASE)}
+let db=load();
+function save(){localStorage.setItem(KEY,JSON.stringify(db));refresh()}
+function totals(){let d=D(),s=db.sales.filter(x=>x.date===d),rev=s.reduce((a,x)=>a+Number(x.total||0),0),cost=s.reduce((a,x)=>a+Number(x.cost||0),0),exp=db.expenses.filter(x=>x.date===d).reduce((a,x)=>a+Number(x.amount||0),0),cred=db.credits.filter(x=>!x.paid).reduce((a,x)=>a+Number(x.amount||0),0);return{s,rev,cost,exp,cred,profit:rev-cost-exp}}
+function refresh(){let t=totals();$('businessName').textContent=db.settings.businessName||'My Shop';$('salesToday').textContent=M(t.rev);$('expensesToday').textContent=M(t.exp);$('creditOwed').textContent=M(t.cred);$('profitToday').textContent=M(t.profit);$('networkStatus').textContent=navigator.onLine?'Online • local database':'OFFLINE • shop still working';$('appStatus').textContent=navigator.onLine?'RetailMate v0.3.3 ready. Offline copy installed after first load.':'Offline mode active. Sales, stock, expenses and credit continue working.';$('appStatus').className='status'+(navigator.onLine?'':' offline')}
+function opts(){return db.products.map((p,i)=>`<option value="${i}">${esc(p.name)} (${p.qty} left)</option>`).join('')}
+function stock(){$('view').innerHTML=`<h2>My Stock</h2>${db.products.length?db.products.map(p=>`<div class="item"><div><b>${esc(p.name)}</b><small>Cost ${M(p.cost)} • Sell ${M(p.sell)}</small></div><span class="badge">${p.qty} left</span></div>`).join(''):'<div class="empty"><strong>No stock yet.</strong>Tap “I Bought Goods” to add your first product.</div>'}`}
+function buy(){$('view').innerHTML=`<h2>I Bought Goods</h2><div class="form"><label>Product name<input id="bn"></label><label>Quantity<input id="bq" type="number" min="1" value="1"></label><label>Cost per item<input id="bc" type="number" min="0" step=".01"></label><label>Selling price<input id="bs" type="number" min="0" step=".01"></label><button id="saveBuy" class="primary">Save Purchase</button></div>`;$('saveBuy').onclick=()=>{let n=$('bn').value.trim(),q=+$('bq').value,c=+$('bc').value,s=+$('bs').value;if(!n||q<1||c<0||s<0)return alert('Complete the product details.');let p=db.products.find(x=>x.name.toLowerCase()===n.toLowerCase());if(p){p.qty+=q;p.cost=c;p.sell=s}else db.products.push({id:uid(),name:n,qty:q,cost:c,sell:s});db.purchases.push({id:uid(),date:D(),product:n,qty:q,cost:c,total:q*c});save();stock()}}
+function sell(){if(!db.products.length){$('view').innerHTML='<h2>Sell</h2><div class="empty"><strong>No stock available.</strong>Add products first.</div>';return}$('view').innerHTML=`<h2>Sell</h2><div class="form"><label>Product<select id="sp">${opts()}</select></label><label>Quantity<input id="sq" type="number" min="1" value="1"></label><label>Payment<select id="pay"><option>Cash</option><option>Mobile Money</option><option>Credit</option></select></label><label>Customer<input id="cust" placeholder="Required for credit"></label><button id="saveSale" class="primary">Record Sale</button></div>`;$('saveSale').onclick=()=>{let p=db.products[+$('sp').value],q=+$('sq').value,pay=$('pay').value,cust=$('cust').value.trim();if(!p||q<1)return;if(q>p.qty)return alert('Not enough stock.');if(pay==='Credit'&&!cust)return alert('Enter customer name.');let total=q*p.sell;db.sales.push({id:uid(),date:D(),product:p.name,qty:q,total,cost:q*p.cost,payment:pay});p.qty-=q;if(pay==='Credit')db.credits.push({id:uid(),date:D(),customer:cust,product:p.name,amount:total,paid:false});save();report()}}
+function expense(){$('view').innerHTML=`<h2>Expense</h2><div class="form"><label>Description<input id="ed"></label><label>Amount<input id="ea" type="number" min=".01" step=".01"></label><button id="saveExp" class="primary">Record Expense</button></div>`;$('saveExp').onclick=()=>{let a=+$('ea').value;if(a<=0)return alert('Enter a valid amount.');db.expenses.push({id:uid(),date:D(),description:$('ed').value.trim()||'Expense',amount:a});save();report()}}
+function credit(){let open=db.credits.filter(x=>!x.paid);$('view').innerHTML=`<h2>Customer Owes Me</h2>${open.length?open.map(c=>`<div class="item"><div><b>${esc(c.customer)}</b><small>${esc(c.product)} • ${c.date}</small></div><div><b>${M(c.amount)}</b><br><button data-id="${c.id}" class="secondary paid">Mark paid</button></div></div>`).join(''):'<div class="empty"><strong>No unpaid credit.</strong></div>'}`;document.querySelectorAll('.paid').forEach(b=>b.onclick=()=>{let c=db.credits.find(x=>x.id===b.dataset.id);if(c){c.paid=true;c.paidDate=D();save();credit()}})}
+function report(){let t=totals(),cash=t.s.filter(x=>x.payment==='Cash').reduce((a,x)=>a+x.total,0),momo=t.s.filter(x=>x.payment==='Mobile Money').reduce((a,x)=>a+x.total,0),cr=t.s.filter(x=>x.payment==='Credit').reduce((a,x)=>a+x.total,0);$('view').innerHTML=`<h2>My Business</h2><div class="report"><div><small>Sales</small><b>${M(t.rev)}</b></div><div><small>Profit</small><b>${M(t.profit)}</b></div><div><small>Cash</small><b>${M(cash)}</b></div><div><small>Mobile Money</small><b>${M(momo)}</b></div><div><small>Credit sales</small><b>${M(cr)}</b></div><div><small>Expenses</small><b>${M(t.exp)}</b></div></div>`}
+function database(){let bytes=new Blob([JSON.stringify(db)]).size;$('view').innerHTML=`<h2>Database Management</h2><div class="notice">The database is stored on this device, so the shop continues working without internet.</div><div class="dbgrid"><div class="dbcard"><small>Products</small><b>${db.products.length}</b></div><div class="dbcard"><small>Sales</small><b>${db.sales.length}</b></div><div class="dbcard"><small>Purchases</small><b>${db.purchases.length}</b></div><div class="dbcard"><small>Size</small><b>${(bytes/1024).toFixed(1)} KB</b></div></div><div class="dbactions"><button id="exportBtn" class="primary">Export Backup</button><button id="restoreBtn" class="secondary">Restore Backup</button><button id="clearBtn" class="danger">Clear Database</button></div>`;$('exportBtn').onclick=exportDB;$('restoreBtn').onclick=()=>$('importFile').click();$('clearBtn').onclick=clearDB}
+function exportDB(){let blob=new Blob([JSON.stringify({version:'0.3.3',exportedAt:new Date().toISOString(),database:db},null,2)],{type:'application/json'}),u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='RetailMate_Backup_'+D()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),500)}
+$('importFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let x=JSON.parse(await f.text()),d=x.database||x;if(!Array.isArray(d.products)||!Array.isArray(d.sales))throw 0;if(confirm('Replace the current database with this backup?')){db=normalize(d);save();database()}}catch(err){alert('Invalid RetailMate backup.')}e.target.value=''}
+function clearDB(){if(confirm('Permanently erase all local RetailMate records?')){db=clone(BASE);save();database()}}
+$('sellBtn').onclick=sell;$('buyBtn').onclick=buy;$('stockBtn').onclick=stock;$('expenseBtn').onclick=expense;$('creditBtn').onclick=credit;$('businessBtn').onclick=report;$('databaseBtn').onclick=database;
+window.addEventListener('online',refresh);window.addEventListener('offline',refresh);refresh();stock();
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js?v=033',{scope:'./'}).catch(console.error))}
+})();
+</script>
 </body>
 </html>
