@@ -6,8 +6,8 @@
 <meta name="theme-color" content="#102a43">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="RetailMate">
-<title>RetailMate Ghana v0.3.3</title>
-<link rel="manifest" href="manifest.json?v=033">
+<title>RetailMate Ghana v0.3.4</title>
+<link rel="manifest" href="manifest.json?v=034">
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f5f7f9;color:#17202a}
 header{background:#102a43;color:white;padding:18px;display:flex;justify-content:space-between;align-items:center;gap:12px}header h1{margin:0;font-size:1.3rem}header p{margin:4px 0 0;opacity:.75}header span{font-size:.8rem}
@@ -17,11 +17,44 @@ main{max-width:950px;margin:auto;padding:16px}.status{padding:10px 12px;border-r
 .panel{background:white;border-radius:16px;padding:18px;min-height:220px}.form{display:grid;gap:10px}.form label{font-size:.85rem;color:#445}.form input,.form select{width:100%;padding:12px;border:1px solid #ccd5dc;border-radius:10px;font-size:1rem}
 .item{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid #e1e6ea;border-radius:12px;padding:12px;margin-bottom:8px}.item small{display:block;color:#667;margin-top:3px}.badge{background:#eef3f7;padding:5px 8px;border-radius:999px}
 .report,.dbgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.report div,.dbcard{background:#f7f9fb;border-radius:12px;padding:13px}.report small,.dbcard small{display:block;color:#667}.report b,.dbcard b{display:block;margin-top:4px}.dbactions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.secondary{background:white;color:#1f5a7a;border:1px solid #ccd5dc}.danger{background:#fff0f0;color:#a33;border:1px solid #efcaca}.notice{padding:11px;border-radius:10px;background:#eef6f2;color:#315d49;font-size:.85rem;margin-bottom:12px}.empty{text-align:center;color:#777;padding:25px}.empty strong{display:block;color:#222;margin-bottom:5px}footer{text-align:center;color:#778;padding:24px 16px;font-size:.8rem}
+.login-wrap{min-height:100vh;display:grid;place-items:center;padding:20px;background:#eef2f5}.login-card{width:min(460px,100%);background:white;border-radius:20px;padding:22px;box-shadow:0 10px 35px #00000014}.login-card h1{margin:0 0 6px}.login-card p{color:#667;margin:0 0 16px}.login-card .tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}.login-card .tabs button{padding:10px;border-radius:10px;border:1px solid #d8e0e6;background:#f7f9fb;font-weight:700}.login-card .tabs button.active{background:#102a43;color:#fff}.hidden{display:none!important}.store-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em;font-weight:800}
 @media(min-width:700px){.metrics{grid-template-columns:repeat(4,1fr)}.actions{grid-template-columns:repeat(4,1fr)}.actions .db{grid-column:auto}.dbgrid{grid-template-columns:repeat(4,1fr)}}
 </style>
 </head>
 <body>
-<header><div><h1>RetailMate Ghana</h1><p id="businessName">My Shop</p></div><span id="networkStatus">Loading…</span></header>
+
+<section id="authScreen" class="login-wrap">
+  <div class="login-card">
+    <h1>RetailMate Ghana</h1>
+    <p>Store access</p>
+
+    <div id="setupPanel">
+      <div class="notice">First time on this device? Create the store account.</div>
+      <div class="form">
+        <label>Store name<input id="setupStoreName" placeholder="e.g. Ama Provision Store"></label>
+        <label>Username<input id="setupUsername" autocomplete="username" placeholder="e.g. ama"></label>
+        <label>Password<input id="setupPassword" type="password" autocomplete="new-password"></label>
+        <button id="createStoreBtn" class="primary">Create Store Account</button>
+      </div>
+    </div>
+
+    <div id="loginPanel" class="hidden">
+      <div class="form">
+        <label>Store code<input id="loginStoreCode" class="store-code" placeholder="RM-GH-XXXXXX"></label>
+        <label>Username<input id="loginUsername" autocomplete="username"></label>
+        <label>Password<input id="loginPassword" type="password" autocomplete="current-password"></label>
+        <button id="loginBtn" class="primary">Login</button>
+        <button id="showSetupBtn" class="secondary">Create another local store</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="appScreen" class="hidden">
+<header>
+  <div><h1>RetailMate Ghana</h1><p id="businessName">My Shop</p><small id="storeCodeHeader" class="store-code"></small></div>
+  <span id="networkStatus">Loading…</span>
+</header>
 <main>
 <div id="appStatus" class="status">RetailMate starting…</div>
 <section class="metrics">
@@ -38,36 +71,123 @@ main{max-width:950px;margin:auto;padding:16px}.status{padding:10px 12px;border-r
 </nav>
 <section id="view" class="panel"></section>
 </main>
-<footer>RetailMate Ghana v0.3.3 • Offline Ready</footer>
+<footer>RetailMate Ghana v0.3.4 • Store Accounts + Offline</footer>
 <input type="file" id="importFile" accept=".json,application/json" hidden>
+</div>
+
 <script>
 (() => {
 'use strict';
-const KEY='retailmate_ghana_v033';
-const BASE={settings:{businessName:'My Shop'},products:[],sales:[],purchases:[],expenses:[],credits:[]};
-const $=id=>document.getElementById(id), clone=o=>JSON.parse(JSON.stringify(o)), D=()=>new Date().toISOString().slice(0,10), M=n=>'GH₵'+Number(n||0).toFixed(2);
+
+const STORES_KEY='retailmate_stores_v034';
+const SESSION_KEY='retailmate_session_v034';
+const $=id=>document.getElementById(id);
+const D=()=>new Date().toISOString().slice(0,10);
+const M=n=>'GH₵'+Number(n||0).toFixed(2);
 const uid=()=>Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-function normalize(p){return{settings:{...BASE.settings,...(p.settings||{})},products:Array.isArray(p.products)?p.products:[],sales:Array.isArray(p.sales)?p.sales:[],purchases:Array.isArray(p.purchases)?p.purchases:[],expenses:Array.isArray(p.expenses)?p.expenses:[],credits:Array.isArray(p.credits)?p.credits:[]}}
-function load(){try{let raw=localStorage.getItem(KEY);if(raw)return normalize(JSON.parse(raw));let old=localStorage.getItem('retailmate_ghana_v032');if(old){let d=normalize(JSON.parse(old));localStorage.setItem(KEY,JSON.stringify(d));return d}}catch(e){}return clone(BASE)}
-let db=load();
-function save(){localStorage.setItem(KEY,JSON.stringify(db));refresh()}
-function totals(){let d=D(),s=db.sales.filter(x=>x.date===d),rev=s.reduce((a,x)=>a+Number(x.total||0),0),cost=s.reduce((a,x)=>a+Number(x.cost||0),0),exp=db.expenses.filter(x=>x.date===d).reduce((a,x)=>a+Number(x.amount||0),0),cred=db.credits.filter(x=>!x.paid).reduce((a,x)=>a+Number(x.amount||0),0);return{s,rev,cost,exp,cred,profit:rev-cost-exp}}
-function refresh(){let t=totals();$('businessName').textContent=db.settings.businessName||'My Shop';$('salesToday').textContent=M(t.rev);$('expensesToday').textContent=M(t.exp);$('creditOwed').textContent=M(t.cred);$('profitToday').textContent=M(t.profit);$('networkStatus').textContent=navigator.onLine?'Online • local database':'OFFLINE • shop still working';$('appStatus').textContent=navigator.onLine?'RetailMate v0.3.3 ready. Offline copy installed after first load.':'Offline mode active. Sales, stock, expenses and credit continue working.';$('appStatus').className='status'+(navigator.onLine?'':' offline')}
+
+let currentStore=null;
+let db=null;
+
+function stores(){
+  try{return JSON.parse(localStorage.getItem(STORES_KEY)||'[]')}catch(e){return[]}
+}
+function saveStores(list){localStorage.setItem(STORES_KEY,JSON.stringify(list))}
+function generateStoreCode(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code='RM-GH-';
+  for(let i=0;i<6;i++)code+=chars[Math.floor(Math.random()*chars.length)];
+  return code;
+}
+async function hashPassword(value){
+  if(window.crypto?.subtle){
+    const data=new TextEncoder().encode(value);
+    const hash=await crypto.subtle.digest('SHA-256',data);
+    return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+  return btoa(unescape(encodeURIComponent(value)));
+}
+function dbKey(code){return 'retailmate_db_'+code}
+function newDB(){return{settings:{businessName:currentStore.name},products:[],sales:[],purchases:[],expenses:[],credits:[]}}
+function loadDB(){
+  try{return JSON.parse(localStorage.getItem(dbKey(currentStore.code)))||newDB()}catch(e){return newDB()}
+}
+function saveDB(){localStorage.setItem(dbKey(currentStore.code),JSON.stringify(db));refresh()}
+function totals(){let s=db.sales.filter(x=>x.date===D()),rev=s.reduce((a,x)=>a+Number(x.total||0),0),cost=s.reduce((a,x)=>a+Number(x.cost||0),0),exp=db.expenses.filter(x=>x.date===D()).reduce((a,x)=>a+Number(x.amount||0),0),cred=db.credits.filter(x=>!x.paid).reduce((a,x)=>a+Number(x.amount||0),0);return{s,rev,cost,exp,cred,profit:rev-cost-exp}}
+function refresh(){let t=totals();$('businessName').textContent=currentStore.name;$('storeCodeHeader').textContent=currentStore.code;$('salesToday').textContent=M(t.rev);$('expensesToday').textContent=M(t.exp);$('creditOwed').textContent=M(t.cred);$('profitToday').textContent=M(t.profit);$('networkStatus').textContent=navigator.onLine?'Online • local database':'OFFLINE • shop still working';$('appStatus').textContent=navigator.onLine?'RetailMate v0.3.4 ready.':'Offline mode active. Shop operations continue.';$('appStatus').className='status'+(navigator.onLine?'':' offline')}
+function showApp(){
+  $('authScreen').classList.add('hidden');$('appScreen').classList.remove('hidden');
+  db=loadDB();refresh();stock();
+}
+function showAuth(){
+  $('appScreen').classList.add('hidden');$('authScreen').classList.remove('hidden');
+  if(stores().length){$('setupPanel').classList.add('hidden');$('loginPanel').classList.remove('hidden')}
+}
+$('showSetupBtn').onclick=()=>{$('loginPanel').classList.add('hidden');$('setupPanel').classList.remove('hidden')};
+
+$('createStoreBtn').onclick=async()=>{
+  const name=$('setupStoreName').value.trim(),username=$('setupUsername').value.trim(),password=$('setupPassword').value;
+  if(!name||!username||password.length<4)return alert('Enter store name, username and a password of at least 4 characters.');
+  let list=stores();
+  if(list.some(s=>s.username.toLowerCase()===username.toLowerCase()))return alert('That username already exists on this device.');
+  let code;do{code=generateStoreCode()}while(list.some(s=>s.code===code));
+  const passwordHash=await hashPassword(password);
+  const store={id:uid(),name,username,code,passwordHash,createdAt:new Date().toISOString()};
+  list.push(store);saveStores(list);currentStore=store;localStorage.setItem(SESSION_KEY,store.code);showApp();
+  alert('Store created. Your store code is '+store.code);
+};
+
+$('loginBtn').onclick=async()=>{
+  const code=$('loginStoreCode').value.trim().toUpperCase(),username=$('loginUsername').value.trim(),password=$('loginPassword').value;
+  const store=stores().find(s=>s.code===code&&s.username.toLowerCase()===username.toLowerCase());
+  if(!store)return alert('Store code or username not found.');
+  if(await hashPassword(password)!==store.passwordHash)return alert('Incorrect password.');
+  currentStore=store;localStorage.setItem(SESSION_KEY,store.code);showApp();
+};
+
 function opts(){return db.products.map((p,i)=>`<option value="${i}">${esc(p.name)} (${p.qty} left)</option>`).join('')}
 function stock(){$('view').innerHTML=`<h2>My Stock</h2>${db.products.length?db.products.map(p=>`<div class="item"><div><b>${esc(p.name)}</b><small>Cost ${M(p.cost)} • Sell ${M(p.sell)}</small></div><span class="badge">${p.qty} left</span></div>`).join(''):'<div class="empty"><strong>No stock yet.</strong>Tap “I Bought Goods” to add your first product.</div>'}`}
-function buy(){$('view').innerHTML=`<h2>I Bought Goods</h2><div class="form"><label>Product name<input id="bn"></label><label>Quantity<input id="bq" type="number" min="1" value="1"></label><label>Cost per item<input id="bc" type="number" min="0" step=".01"></label><label>Selling price<input id="bs" type="number" min="0" step=".01"></label><button id="saveBuy" class="primary">Save Purchase</button></div>`;$('saveBuy').onclick=()=>{let n=$('bn').value.trim(),q=+$('bq').value,c=+$('bc').value,s=+$('bs').value;if(!n||q<1||c<0||s<0)return alert('Complete the product details.');let p=db.products.find(x=>x.name.toLowerCase()===n.toLowerCase());if(p){p.qty+=q;p.cost=c;p.sell=s}else db.products.push({id:uid(),name:n,qty:q,cost:c,sell:s});db.purchases.push({id:uid(),date:D(),product:n,qty:q,cost:c,total:q*c});save();stock()}}
-function sell(){if(!db.products.length){$('view').innerHTML='<h2>Sell</h2><div class="empty"><strong>No stock available.</strong>Add products first.</div>';return}$('view').innerHTML=`<h2>Sell</h2><div class="form"><label>Product<select id="sp">${opts()}</select></label><label>Quantity<input id="sq" type="number" min="1" value="1"></label><label>Payment<select id="pay"><option>Cash</option><option>Mobile Money</option><option>Credit</option></select></label><label>Customer<input id="cust" placeholder="Required for credit"></label><button id="saveSale" class="primary">Record Sale</button></div>`;$('saveSale').onclick=()=>{let p=db.products[+$('sp').value],q=+$('sq').value,pay=$('pay').value,cust=$('cust').value.trim();if(!p||q<1)return;if(q>p.qty)return alert('Not enough stock.');if(pay==='Credit'&&!cust)return alert('Enter customer name.');let total=q*p.sell;db.sales.push({id:uid(),date:D(),product:p.name,qty:q,total,cost:q*p.cost,payment:pay});p.qty-=q;if(pay==='Credit')db.credits.push({id:uid(),date:D(),customer:cust,product:p.name,amount:total,paid:false});save();report()}}
-function expense(){$('view').innerHTML=`<h2>Expense</h2><div class="form"><label>Description<input id="ed"></label><label>Amount<input id="ea" type="number" min=".01" step=".01"></label><button id="saveExp" class="primary">Record Expense</button></div>`;$('saveExp').onclick=()=>{let a=+$('ea').value;if(a<=0)return alert('Enter a valid amount.');db.expenses.push({id:uid(),date:D(),description:$('ed').value.trim()||'Expense',amount:a});save();report()}}
-function credit(){let open=db.credits.filter(x=>!x.paid);$('view').innerHTML=`<h2>Customer Owes Me</h2>${open.length?open.map(c=>`<div class="item"><div><b>${esc(c.customer)}</b><small>${esc(c.product)} • ${c.date}</small></div><div><b>${M(c.amount)}</b><br><button data-id="${c.id}" class="secondary paid">Mark paid</button></div></div>`).join(''):'<div class="empty"><strong>No unpaid credit.</strong></div>'}`;document.querySelectorAll('.paid').forEach(b=>b.onclick=()=>{let c=db.credits.find(x=>x.id===b.dataset.id);if(c){c.paid=true;c.paidDate=D();save();credit()}})}
+function buy(){$('view').innerHTML=`<h2>I Bought Goods</h2><div class="form"><label>Product name<input id="bn"></label><label>Quantity<input id="bq" type="number" min="1" value="1"></label><label>Cost per item<input id="bc" type="number" min="0" step=".01"></label><label>Selling price<input id="bs" type="number" min="0" step=".01"></label><button id="saveBuy" class="primary">Save Purchase</button></div>`;$('saveBuy').onclick=()=>{let n=$('bn').value.trim(),q=+$('bq').value,c=+$('bc').value,s=+$('bs').value;if(!n||q<1||c<0||s<0)return alert('Complete the product details.');let p=db.products.find(x=>x.name.toLowerCase()===n.toLowerCase());if(p){p.qty+=q;p.cost=c;p.sell=s}else db.products.push({id:uid(),name:n,qty:q,cost:c,sell:s});db.purchases.push({id:uid(),date:D(),product:n,qty:q,cost:c,total:q*c});saveDB();stock()}}
+function sell(){if(!db.products.length){$('view').innerHTML='<h2>Sell</h2><div class="empty"><strong>No stock available.</strong>Add products first.</div>';return}$('view').innerHTML=`<h2>Sell</h2><div class="form"><label>Product<select id="sp">${opts()}</select></label><label>Quantity<input id="sq" type="number" min="1" value="1"></label><label>Payment<select id="pay"><option>Cash</option><option>Mobile Money</option><option>Credit</option></select></label><label>Customer<input id="cust" placeholder="Required for credit"></label><button id="saveSale" class="primary">Record Sale</button></div>`;$('saveSale').onclick=()=>{let p=db.products[+$('sp').value],q=+$('sq').value,pay=$('pay').value,cust=$('cust').value.trim();if(!p||q<1)return;if(q>p.qty)return alert('Not enough stock.');if(pay==='Credit'&&!cust)return alert('Enter customer name.');let total=q*p.sell;db.sales.push({id:uid(),date:D(),product:p.name,qty:q,total,cost:q*p.cost,payment:pay});p.qty-=q;if(pay==='Credit')db.credits.push({id:uid(),date:D(),customer:cust,product:p.name,amount:total,paid:false});saveDB();report()}}
+
+function credit(){
+  const open=db.credits.filter(x=>!x.paid);
+  $('view').innerHTML=`<h2>Customer Owes Me</h2>
+  <div class="form" style="margin-bottom:16px">
+    <label>Customer name<input id="creditCustomer" placeholder="e.g. Kojo Mensah"></label>
+    <label>Description<input id="creditDescription" placeholder="e.g. 2 soaps and Milo"></label>
+    <label>Amount owed<input id="creditAmount" type="number" min="0.01" step="0.01"></label>
+    <button id="addCreditBtn" class="primary">Add Credit</button>
+  </div>
+  <div class="notice">You can add credit here manually, or choose “Credit” when recording a sale.</div>
+  ${open.length?open.map(c=>`<div class="item"><div><b>${esc(c.customer)}</b><small>${esc(c.product||c.description||'Credit')} • ${c.date}</small></div><div><b>${M(c.amount)}</b><br><button data-id="${c.id}" class="secondary paid">Mark paid</button></div></div>`).join(''):'<div class="empty"><strong>No unpaid credit.</strong></div>'}`;
+  $('addCreditBtn').onclick=()=>{
+    const customer=$('creditCustomer').value.trim(),description=$('creditDescription').value.trim()||'Manual credit',amount=+$('creditAmount').value;
+    if(!customer||amount<=0)return alert('Enter customer name and amount.');
+    db.credits.push({id:uid(),date:D(),customer,description,amount,paid:false});
+    saveDB();credit();
+  };
+  document.querySelectorAll('.paid').forEach(b=>b.onclick=()=>{
+    const c=db.credits.find(x=>x.id===b.dataset.id);
+    if(c){c.paid=true;c.paidDate=D();saveDB();credit()}
+  });
+}
+function expense(){$('view').innerHTML=`<h2>Expense</h2><div class="form"><label>Description<input id="ed"></label><label>Amount<input id="ea" type="number" min=".01" step=".01"></label><button id="saveExp" class="primary">Record Expense</button></div>`;$('saveExp').onclick=()=>{let a=+$('ea').value;if(a<=0)return alert('Enter a valid amount.');db.expenses.push({id:uid(),date:D(),description:$('ed').value.trim()||'Expense',amount:a});saveDB();report()}}
 function report(){let t=totals(),cash=t.s.filter(x=>x.payment==='Cash').reduce((a,x)=>a+x.total,0),momo=t.s.filter(x=>x.payment==='Mobile Money').reduce((a,x)=>a+x.total,0),cr=t.s.filter(x=>x.payment==='Credit').reduce((a,x)=>a+x.total,0);$('view').innerHTML=`<h2>My Business</h2><div class="report"><div><small>Sales</small><b>${M(t.rev)}</b></div><div><small>Profit</small><b>${M(t.profit)}</b></div><div><small>Cash</small><b>${M(cash)}</b></div><div><small>Mobile Money</small><b>${M(momo)}</b></div><div><small>Credit sales</small><b>${M(cr)}</b></div><div><small>Expenses</small><b>${M(t.exp)}</b></div></div>`}
-function database(){let bytes=new Blob([JSON.stringify(db)]).size;$('view').innerHTML=`<h2>Database Management</h2><div class="notice">The database is stored on this device, so the shop continues working without internet.</div><div class="dbgrid"><div class="dbcard"><small>Products</small><b>${db.products.length}</b></div><div class="dbcard"><small>Sales</small><b>${db.sales.length}</b></div><div class="dbcard"><small>Purchases</small><b>${db.purchases.length}</b></div><div class="dbcard"><small>Size</small><b>${(bytes/1024).toFixed(1)} KB</b></div></div><div class="dbactions"><button id="exportBtn" class="primary">Export Backup</button><button id="restoreBtn" class="secondary">Restore Backup</button><button id="clearBtn" class="danger">Clear Database</button></div>`;$('exportBtn').onclick=exportDB;$('restoreBtn').onclick=()=>$('importFile').click();$('clearBtn').onclick=clearDB}
-function exportDB(){let blob=new Blob([JSON.stringify({version:'0.3.3',exportedAt:new Date().toISOString(),database:db},null,2)],{type:'application/json'}),u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='RetailMate_Backup_'+D()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),500)}
-$('importFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let x=JSON.parse(await f.text()),d=x.database||x;if(!Array.isArray(d.products)||!Array.isArray(d.sales))throw 0;if(confirm('Replace the current database with this backup?')){db=normalize(d);save();database()}}catch(err){alert('Invalid RetailMate backup.')}e.target.value=''}
-function clearDB(){if(confirm('Permanently erase all local RetailMate records?')){db=clone(BASE);save();database()}}
+function database(){let bytes=new Blob([JSON.stringify(db)]).size;$('view').innerHTML=`<h2>Database Management</h2><div class="notice">Store: <b>${esc(currentStore.name)}</b><br>Store code: <span class="store-code">${currentStore.code}</span><br>Username: ${esc(currentStore.username)}</div><div class="dbgrid"><div class="dbcard"><small>Products</small><b>${db.products.length}</b></div><div class="dbcard"><small>Sales</small><b>${db.sales.length}</b></div><div class="dbcard"><small>Credit records</small><b>${db.credits.length}</b></div><div class="dbcard"><small>Size</small><b>${(bytes/1024).toFixed(1)} KB</b></div></div><div class="dbactions"><button id="exportBtn" class="primary">Export Backup</button><button id="restoreBtn" class="secondary">Restore Backup</button><button id="logoutBtn" class="secondary">Logout</button><button id="clearBtn" class="danger">Clear Store Data</button></div>`;$('exportBtn').onclick=exportDB;$('restoreBtn').onclick=()=>$('importFile').click();$('logoutBtn').onclick=()=>{localStorage.removeItem(SESSION_KEY);currentStore=null;showAuth()};$('clearBtn').onclick=clearDB}
+function exportDB(){let blob=new Blob([JSON.stringify({version:'0.3.4',store:{name:currentStore.name,username:currentStore.username,code:currentStore.code},exportedAt:new Date().toISOString(),database:db},null,2)],{type:'application/json'}),u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=`RetailMate_${currentStore.code}_${D()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(u),500)}
+$('importFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let x=JSON.parse(await f.text()),d=x.database||x;if(!Array.isArray(d.products)||!Array.isArray(d.sales))throw 0;if(confirm('Replace this store database with the selected backup?')){db=d;saveDB();database()}}catch(err){alert('Invalid RetailMate backup.')}e.target.value=''}
+function clearDB(){if(confirm('Permanently erase all business records for this store on this device?')){localStorage.removeItem(dbKey(currentStore.code));db=newDB();saveDB();database()}}
+
 $('sellBtn').onclick=sell;$('buyBtn').onclick=buy;$('stockBtn').onclick=stock;$('expenseBtn').onclick=expense;$('creditBtn').onclick=credit;$('businessBtn').onclick=report;$('databaseBtn').onclick=database;
-window.addEventListener('online',refresh);window.addEventListener('offline',refresh);refresh();stock();
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js?v=033',{scope:'./'}).catch(console.error))}
+window.addEventListener('online',()=>currentStore&&refresh());window.addEventListener('offline',()=>currentStore&&refresh());
+
+const savedSession=localStorage.getItem(SESSION_KEY);
+const savedStore=stores().find(s=>s.code===savedSession);
+if(savedStore){currentStore=savedStore;showApp()}else showAuth();
+
+if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js?v=034',{scope:'./'}).catch(console.error))}
 })();
 </script>
 </body>

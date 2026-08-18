@@ -1,14 +1,30 @@
-RetailMate Ghana v0.3.3 — Offline Ready
+RetailMate Ghana v0.3.4 — Store Accounts + Credit Fix + Offline
 
-Deploy index.html, manifest.json, sw.js, vercel.json and README.txt to the GitHub repository root.
+New:
+- Customer Owes Me now opens a working credit management page.
+- Credit can be added manually.
+- Credit can still be created from a sale.
+- Credit can be marked paid.
+- Each local store has:
+  - Store name
+  - Username
+  - Password
+  - Store code such as RM-GH-7K9P2M
+- Password is stored as a hash where Web Crypto is supported.
+- Each store has a separate local database.
+- Logout/login supported.
+- Offline operation preserved.
 
-Offline test:
-1. Open the deployed Vercel site once while online.
-2. Wait 5–10 seconds.
-3. Turn on Airplane Mode.
-4. Refresh or reopen the same RetailMate URL.
-5. The header should say “OFFLINE • shop still working”.
-6. Add stock and record a sale while offline.
-7. Reconnect to the internet; the records remain stored locally.
+Important limitation:
+The store code is generated locally and is unique among stores on that device.
+Global uniqueness across every RetailMate installation requires the future cloud backend.
 
-This is local offline operation. Cloud multi-device synchronization is not included yet.
+Deploy:
+Replace the repository root with:
+index.html
+manifest.json
+sw.js
+vercel.json
+README.txt
+
+Commit to main and let Vercel deploy.
