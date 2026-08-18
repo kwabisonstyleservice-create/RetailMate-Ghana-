@@ -1,35 +1,16 @@
-RetailMate Ghana Clean v0.3.1
+RetailMate Ghana v0.3.2 repair build.
 
-This is the clean replacement build.
+Fixes:
+- Buttons now use explicit event listeners.
+- DOMContentLoaded initialization.
+- No browser-global element references.
+- Visible startup status.
+- Cache-busting on CSS/JS.
+- Vercel no-store headers.
+- Old service workers unregistered.
 
-Features:
-- Sales
-- Products and stock
-- Purchases/restocking
-- Cash, Mobile Money and credit transactions
-- Expenses
-- Customer credit
-- Daily business report
-- Offline local storage
-- Database Management
-- JSON backup export
-- JSON backup restore
-- Database statistics
-- Controlled database reset
-
-Important:
-This version is single-device local storage.
-Cloud database, multi-user accounts and multi-device synchronization come next.
-
-To deploy:
-Upload these files to the root of the GitHub repository and commit to main:
-index.html
-styles.css
-app.js
-manifest.json
-sw.js
-vercel.json
-README.txt
-
-Verify the footer says:
-RetailMate Ghana Clean v0.3.1
+Deploy all files to the GitHub repository root and commit to main.
+Verify:
+1. Footer says RetailMate Ghana v0.3.2
+2. Green message says RetailMate v0.3.2 loaded successfully.
+3. I BOUGHT GOODS opens a form.

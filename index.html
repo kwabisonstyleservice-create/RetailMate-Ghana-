@@ -4,39 +4,41 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#102a43">
-<title>RetailMate Ghana v0.3.1</title>
-<link rel="manifest" href="manifest.json">
-<link rel="stylesheet" href="styles.css">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>RetailMate Ghana v0.3.2</title>
+<link rel="manifest" href="manifest.json?v=032">
+<link rel="stylesheet" href="styles.css?v=032">
 </head>
 <body>
 <header class="topbar">
-  <div><h1>RetailMate Ghana</h1><p id="business">My Shop</p></div>
-  <div><span id="status">Saved locally</span><button onclick="showView('database')">Database</button></div>
+  <div><h1>RetailMate Ghana</h1><p id="businessName">My Shop</p></div>
+  <div class="topright"><span id="networkStatus">Loading app…</span><button id="databaseTopBtn" type="button">Database</button></div>
 </header>
 
 <main>
-<section class="metrics">
-  <div><span>Sales today</span><strong id="salesToday">GH₵0.00</strong></div>
-  <div><span>Expenses</span><strong id="expensesToday">GH₵0.00</strong></div>
-  <div><span>Credit owed</span><strong id="creditOwed">GH₵0.00</strong></div>
-  <div><span>Est. profit</span><strong id="profitToday">GH₵0.00</strong></div>
-</section>
+  <div id="appStatus" class="app-status">App starting…</div>
+  <section class="metrics">
+    <div><span>Sales today</span><strong id="salesToday">GH₵0.00</strong></div>
+    <div><span>Expenses</span><strong id="expensesToday">GH₵0.00</strong></div>
+    <div><span>Credit owed</span><strong id="creditOwed">GH₵0.00</strong></div>
+    <div><span>Est. profit</span><strong id="profitToday">GH₵0.00</strong></div>
+  </section>
 
-<nav class="actions">
-  <button onclick="showView('sell')">SELL</button>
-  <button onclick="showView('buy')">I BOUGHT GOODS</button>
-  <button onclick="showView('stock')">MY STOCK</button>
-  <button onclick="showView('expense')">EXPENSE</button>
-  <button onclick="showView('credit')">CUSTOMER OWES ME</button>
-  <button onclick="showView('report')">MY BUSINESS</button>
-  <button onclick="showView('database')" class="dbbtn">DATABASE MANAGEMENT</button>
-</nav>
+  <nav class="actions">
+    <button id="sellBtn" type="button">SELL</button>
+    <button id="buyBtn" type="button">I BOUGHT GOODS</button>
+    <button id="stockBtn" type="button">MY STOCK</button>
+    <button id="expenseBtn" type="button">EXPENSE</button>
+    <button id="creditBtn" type="button">CUSTOMER OWES ME</button>
+    <button id="businessBtn" type="button">MY BUSINESS</button>
+    <button id="databaseBtn" class="dbbtn" type="button">DATABASE MANAGEMENT</button>
+  </nav>
 
-<section id="view" class="panel"></section>
+  <section id="view" class="panel"><div class="empty"><strong>Loading RetailMate…</strong></div></section>
 </main>
 
-<footer>RetailMate Ghana Clean v0.3.1</footer>
-<input type="file" id="importFile" accept="application/json" hidden>
-<script src="app.js"></script>
+<footer>RetailMate Ghana v0.3.2</footer>
+<input type="file" id="importFile" accept=".json,application/json" hidden>
+<script src="app.js?v=032" defer></script>
 </body>
 </html>

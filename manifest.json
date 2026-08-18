@@ -1,9 +1,8 @@
 {
   "name": "RetailMate Ghana",
   "short_name": "RetailMate",
-  "start_url": "./",
+  "start_url": "./?v=032",
   "display": "standalone",
   "background_color": "#f5f7f9",
-  "theme_color": "#102a43",
-  "description": "Offline-first retail POS and bookkeeping for Ghanaian retailers."
+  "theme_color": "#102a43"
 }
