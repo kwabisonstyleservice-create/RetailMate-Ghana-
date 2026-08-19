@@ -1,30 +1,7 @@
-RetailMate Ghana v0.3.4 — Store Accounts + Credit Fix + Offline
+RetailMate Ghana v0.3.5
 
-New:
-- Customer Owes Me now opens a working credit management page.
-- Credit can be added manually.
-- Credit can still be created from a sale.
-- Credit can be marked paid.
-- Each local store has:
-  - Store name
-  - Username
-  - Password
-  - Store code such as RM-GH-7K9P2M
-- Password is stored as a hash where Web Crypto is supported.
-- Each store has a separate local database.
-- Logout/login supported.
-- Offline operation preserved.
+Adds Owner + Staff/Manager users per store. Staff login with store code + username + password; store name is not required.
 
-Important limitation:
-The store code is generated locally and is unique among stores on that device.
-Global uniqueness across every RetailMate installation requires the future cloud backend.
+Customer Owes Me now supports full or partial credit repayments by Cash or Mobile Money, updates remaining balances, and tracks repayments received today.
 
-Deploy:
-Replace the repository root with:
-index.html
-manifest.json
-sw.js
-vercel.json
-README.txt
-
-Commit to main and let Vercel deploy.
+Important: this prototype still stores store/user/database data locally. A staff member on another phone cannot yet retrieve the same store by code alone. That requires the cloud backend and synchronization layer.
