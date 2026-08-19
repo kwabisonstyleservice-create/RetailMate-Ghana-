@@ -21,5 +21,3 @@ Run locally:
 
 This prototype does not yet include cloud backup/sync, login, barcode scanning,
 receipt printing, supplier debt, voice input, AI, or production-grade security.
-add RetailMate Ghana v0.3 
-RetailMate Ghana Clean v0.3.1
